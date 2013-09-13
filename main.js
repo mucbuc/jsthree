@@ -3,3 +3,4 @@ var exec = require( './lib/exec' ).exec
 
 exports.exec = exec;
 exports.walk = walk;
+exports.Network = require( './lib/Network' );
