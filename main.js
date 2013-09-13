@@ -1,6 +1,4 @@
-var exec = require( './lib/exec' ).exec
-  , walk = require( './lib/walk' ).walk;
 
-exports.exec = exec;
-exports.walk = walk;
-exports.Network = require( './lib/Network' );
+exports.exec = require( './lib/exec' ).exec;
+exports.walk = require( './lib/walk' ).walk;
+exports.Network = require( './lib/Network' ).NetWork;
