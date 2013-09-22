@@ -5,5 +5,8 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/mucbuc/jsthree"
+  },
+  "dependencies": {
+  	"mucbuc-jsbag": "*"
   }
 }
