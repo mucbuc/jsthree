@@ -14,16 +14,21 @@ function checkOut() {
 	  , result = ''
 	  , cwd = path.join( __dirname, 'sample' );
 
-	p.on( 'out', function( data ) { 
+	p.on( 'out', function( data ) {
 		result += data; 
 	} );
 
+	process.on( 'exit', fail );
 	p.on( 'exit', function() {
-		console.log( result );
 		assert( result.trim() == 'test_dummy.txt' );
 		console.log( 'checkOut passed' );
+		process.removeListener( 'exit', fail );
 	} );
 
 	p.onTickEmit( 'exec', 'ls', cwd );
 	p.tick();
+
+	function fail() {
+		assert( false );
+	}
 }
