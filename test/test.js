@@ -4,13 +4,61 @@ var assert = require( 'assert' )
   , Processor = require( './../lib/processor' ).Processor
   , path = require( 'path' )
   , stream = require( 'stream' )
-  , cp = require( 'child_process' );
+  , cp = require( 'child_process' )
+  , events = require( 'events' );
 
 assert( typeof Processor != 'undefined' );
 
+checkError();
+checkOut();
+
+function checkOut() {
+
+	var e = new events.EventEmitter()
+	  , wd = path.join( __dirname, 'sample' )
+		, p = new Processor( { cmd: 'ls', cwd: wd }, e );
+
+	e.on( 'read', function( data ) {
+		assert( data.toString().trim() == 'test_dummy.txt' );
+		process.removeListener( 'exit', fail );
+		console.log( 'check out passed' );
+	} );
+
+	process.on( 'exit', fail );
+
+	e.emit( 'execute' );
+
+	function fail() {
+		assert( false );
+	}
+}
+
+function checkError() {
+	
+	var e = new events.EventEmitter()
+	  , p = new Processor( { cmd: 'cat', args: [ 'doesNotExist.txt' ], cwd: __dirname }, e )
+	  , pass = false;
+
+	e.on( 'child_error', function( data ) {
+		console.log( data.toString() );
+		pass = true;
+	} );
+
+	e.on( 'read', function( data ) { 
+		assert( false );
+	} );
+
+	process.on( 'exit', function() {
+		assert( pass );
+		console.log( 'check error passed' );
+	} );
+
+	e.emit( 'execute' );
+}
+
 
 //checkOut();
-checkStdin(); 
+//checkStdin(); 
 
 function checkStdin() {
 
@@ -54,7 +102,7 @@ function checkStdin() {
 
 	// shell.on( 'exit', function() { process.exit(); } );
 }
-
+/*
 function checkOut() {
 
 	var p = new Processor()
@@ -82,4 +130,4 @@ function checkOut() {
 	function fail() {
 		assert( false );
 	}
-}
+}*/
