@@ -9,8 +9,26 @@ var assert = require( 'assert' )
 
 assert( typeof Processor != 'undefined' );
 
+function fail() {
+	assert( false );
+}
+
 checkError();
 checkOut();
+checkIn();
+
+function checkIn() {
+
+	var e = new events.EventEmitter()
+		, wd = path.join( __dirname, 'bin' )
+	  , p = new Processor( { cmd: "./dummy_read", cwd: wd }, e );
+
+  e.emit( 'execute' );
+  e.emit( 'write', 'a\n' );
+  e.on( 'exit', function() { 
+  	console.log( 'check in passed' );
+  } );
+}
 
 function checkOut() {
 
@@ -27,10 +45,6 @@ function checkOut() {
 	process.on( 'exit', fail );
 
 	e.emit( 'execute' );
-
-	function fail() {
-		assert( false );
-	}
 }
 
 function checkError() {
@@ -40,7 +54,6 @@ function checkError() {
 	  , pass = false;
 
 	e.on( 'child_error', function( data ) {
-		console.log( data.toString() );
 		pass = true;
 	} );
 
@@ -55,79 +68,3 @@ function checkError() {
 
 	e.emit( 'execute' );
 }
-
-
-//checkOut();
-//checkStdin(); 
-
-function checkStdin() {
-
-	var shell = cp.spawn( 'node | cat' ); //, [], { stdio: 'inherit' } );
-
-	process.stdin.resume();
-	process.stdin.pipe( shell.stdin );
-	
-	shell.stdout.pipe( process.stdout );
-
-	// process.stdin.on( 'data', function( data ) {
-	// 	//console.log( '*', data );
-	// } );
-
-	// shell.stdout.on( 'data', function( data ) {
-	// 	process.stdout.write( data );
-	// } );
-
-	// process.stdin.resume();
-	// process.stdin.on( 'data', function( data ) {
-	// 	console.log( '****', data );
-	// 	shell.stdin.write( data );
-	// } );
-
-	// shell.stdout.on( 'data', function( data ) { 
-	// 	console.log( '%%%%', data );
-	// 	process.stdout.write( data );
-	// } );
-	
-	//, {end: false} );
-	
-	// shell.stdout.pipe( process.stdout );
-
-
-	// process.stdin.resume();
-	// process.stdin.pipe( shell.stdin );
-
-	// shell.stdin.on( 'end', function() {
-	// 	process.write( 'stream ended' );
-	// } );
-
-	// shell.on( 'exit', function() { process.exit(); } );
-}
-/*
-function checkOut() {
-
-	var p = new Processor()
-	  , result = ''
-	  , cwd = path.join( __dirname, 'sample' );
-
-    setInterval( p.tick, 100 );
-
-	p.on( 'out', function( data ) {
-		result += data; 
-		process.stdout.write( data );
-	} );
-
-	process.on( 'exit', fail );
-	
-	p.on( 'exit', function() {
-		assert( result.trim() == 'test_dummy.txt' );
-		console.log( 'checkOut passed' );
-		process.removeListener( 'exit', fail );
-		clearInterval( p.tick );
-	} );
-
-	p.onTickEmit( 'exec', 'sudo', cwd );
-
-	function fail() {
-		assert( false );
-	}
-}*/
