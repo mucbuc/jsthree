@@ -16,18 +16,35 @@ function fail() {
 checkError();
 checkOut();
 checkIn();
+checkKill();
+
+function checkKill() {
+	var e = getDummy();
+
+	e.on( 'exit', function() { 
+  	console.log( 'check kill passed' );
+  } );
+
+	e.emit( 'execute' );
+	e.emit( 'kill' );	
+}
 
 function checkIn() {
-
-	var e = new events.EventEmitter()
-		, wd = path.join( __dirname, 'bin' )
-	  , p = new Processor( { cmd: "./dummy_read", cwd: wd }, e );
+	var e = getDummy();
 
   e.emit( 'execute' );
   e.emit( 'write', 'a\n' );
   e.on( 'exit', function() { 
   	console.log( 'check in passed' );
   } );
+}
+
+function getDummy() {
+	var e = new events.EventEmitter()
+		, wd = path.join( __dirname, 'bin' )
+	  , p = new Processor( { cmd: "./dummy_read", cwd: wd }, e );
+
+	return e;
 }
 
 function checkOut() {
