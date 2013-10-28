@@ -70,7 +70,7 @@ function checkError() {
 	  , p = new Processor( { cmd: 'cat', args: [ 'doesNotExist.txt' ], cwd: __dirname }, e )
 	  , pass = false;
 
-	e.on( 'child_error', function( data ) {
+	e.on( 'error_read', function( data ) {
 		assert( typeof data !== 'undefined' && data.length );
 		pass = true;
 	} );
