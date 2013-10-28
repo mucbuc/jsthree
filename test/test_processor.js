@@ -22,8 +22,8 @@ function checkKill() {
 	var e = getDummy();
 
 	e.on( 'exit', function() { 
-  	console.log( 'check kill passed' );
-  } );
+		console.log( 'check kill passed' );
+	} );
 
 	e.emit( 'execute' );
 	e.emit( 'kill' );	
@@ -70,11 +70,8 @@ function checkError() {
 	  , p = new Processor( { cmd: 'cat', args: [ 'doesNotExist.txt' ], cwd: __dirname }, e )
 	  , pass = false;
 
-	e.on( 'child_error', function( code, signal ) {
-
-		assert( typeof code !== 'undefined' && code.length );
-		assert( typeof signal === 'undefined');
-
+	e.on( 'child_error', function( data ) {
+		assert( typeof data !== 'undefined' && data.length );
 		pass = true;
 	} );
 
@@ -82,7 +79,9 @@ function checkError() {
 		assert( false );
 	} );
 
-	process.on( 'exit', function() {
+	process.on( 'exit', function(code, signal) {
+		assert( code === 0 );	
+		assert( typeof signal === 'undefined' ); 
 		assert( pass );
 		console.log( 'check error passed' );
 	} );
