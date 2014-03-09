@@ -33,7 +33,7 @@ function checkIn() {
 	var e = getDummy();
 
   e.emit( 'execute' );
-  e.emit( 'write', 'a\n' );
+  e.emit( 'stdin', 'a\n' );
   e.on( 'exit', function() { 
   	console.log( 'check in passed' );
   } );
@@ -53,7 +53,7 @@ function checkOut() {
 	  , wd = path.join( __dirname, 'sample' )
 		, p = new Processor( { cmd: 'ls', cwd: wd }, e );
 
-	e.on( 'read', function( data ) {
+	e.on( 'stdout', function( data ) {
 		assert( data.toString().trim() == 'test_dummy.txt' );
 		process.removeListener( 'exit', fail );
 		console.log( 'check out passed' );
@@ -70,12 +70,12 @@ function checkError() {
 	  , p = new Processor( { cmd: 'cat', args: [ 'doesNotExist.txt' ], cwd: __dirname }, e )
 	  , pass = false;
 
-	e.on( 'error_read', function( data ) {
+	e.on( 'stderr', function( data ) {
 		assert( typeof data !== 'undefined' && data.length );
 		pass = true;
 	} );
 
-	e.on( 'read', function( data ) { 
+	e.on( 'stdout', function( data ) { 
 		assert( false );
 	} );
 
