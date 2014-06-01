@@ -16,15 +16,12 @@ function checkTokenizer() {
   test( testTwoMatches );
 
   function testTwoMatches( emitter, tokenizer ) {
-    tokenizer.match( ';', 'statement' );
-    tokenizer.match( '\\(', 'open' );
     emitter.expect( 'open' );
     emitter.expect( 'statement' );
-    tokenizer.process( '(;' );
+    tokenizer.process( '{;' );
   }
 
   function testDummyCode( emitter, tokenizer ) {
-    tokenizer.match( ';', 'statement' );
     emitter.expect( 'statement' );
     tokenizer.process( ';' );
   }
